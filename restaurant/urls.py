@@ -21,6 +21,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+
 urlpatterns = [
     path('', include('restaurant_api.urls')), # add this
     path('admin/', admin.site.urls),

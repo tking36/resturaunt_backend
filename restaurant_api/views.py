@@ -54,10 +54,21 @@ class LoginView(APIView):
             refresh = RefreshToken.for_user(user)
 
             # Return tokens in response
-            return Response({
-                'access_token': str(refresh.access_token),
-                'refresh_token': str(refresh)
+            response = Response({
+                # 'access_token': str(refresh.access_token),
+                # 'refresh_token': str(refresh),
+                'message': 'Login successful'
             }, status=status.HTTP_200_OK)
+        
+            response.set_cookie(
+                key='jwt',
+                value=str(refresh.access_token),
+                httponly=True,
+                secure=True,  # Set to True in production
+                samesite='Strict',
+                max_age=3600
+            )
+            return response
         else:
             # Authentication failed
             return Response({ 'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -88,3 +99,10 @@ class SignUpView(APIView):
                 print(user.username)
                 return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class AuthStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        print(Response.status_code)
+        return Response({'status': 'authenticated'})
