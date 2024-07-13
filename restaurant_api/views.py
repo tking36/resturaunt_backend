@@ -15,6 +15,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 import json
 from django.contrib.auth import authenticate
+import logging
 
 class RestaurantList(generics.ListCreateAPIView):
     queryset = Restaurant.objects.all().order_by('id') # tell django how to retrieve all objects from the DB, order by id ascending
@@ -101,8 +102,16 @@ class SignUpView(APIView):
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class AuthStatusView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request):
-        print(Response.status_code)
-        return Response({'status': 'authenticated'})
+        print(request)
+        token = request.COOKIES.get('jwt')
+        if not token:
+            return Response({'status': 'not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # print(f"Token: {token}")
+        # print(f"Status code: {Response.status_code}")
+        
+        # print(Response.status_code)
+        return Response({'status': 'authenticated', 'username': request.user.username}, status=status.HTTP_200_OK)

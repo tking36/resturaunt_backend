@@ -79,6 +79,23 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',  # Frontend URL
+]
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # Frontend URL
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',  # Frontend URL
+]
+
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+    'Access-Control-Allow-Origin',
+]
+
 ROOT_URLCONF = 'restaurant.urls'
 
 TEMPLATES = [
