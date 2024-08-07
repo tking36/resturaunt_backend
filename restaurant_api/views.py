@@ -15,7 +15,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 import json
 from django.contrib.auth import authenticate
-import logging
+from django.http import HttpResponse
 
 class RestaurantList(generics.ListCreateAPIView):
     queryset = Restaurant.objects.all().order_by('id') # tell django how to retrieve all objects from the DB, order by id ascending
@@ -75,17 +75,20 @@ class LoginView(APIView):
             return Response({ 'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class LogoutView(APIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = [AllowAny]
     def post(self, request):
         print(request)
         print(request.data)
-        try:
-            refresh_token = request.data['refresh_token']
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response(status=status.HTTP_205_RESET_CONTENT)
-        except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        response = HttpResponse({"message": "Logout successful"}, status=status.HTTP_200_OK)
+        response.delete_cookie('jwt')
+        return response
+        # try:
+        #     refresh_token = request.data['refresh_token']
+        #     token = RefreshToken(refresh_token)
+        #     token.blacklist()
+        #     return Response(status=status.HTTP_205_RESET_CONTENT)
+        # except Exception as e:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
         
 class SignUpView(APIView):
     permission_classes = [AllowAny]
